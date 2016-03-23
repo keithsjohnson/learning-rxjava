@@ -2,7 +2,7 @@ bin
 build
 .gradle/*
 .classpath
-.project
 cache
 *.iml
 .idea
+/.gradle/

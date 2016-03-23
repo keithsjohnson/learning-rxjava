@@ -33,10 +33,6 @@ test {
     systemProperties 'property': 'value'
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.0'
-}
-
 task (execute, dependsOn: 'classes') << {
    def cl = 'com.packtpub.reactive.chapter0' + chapter + '.' + example
    def classpath = sourceSets.main.runtimeClasspath
@@ -68,4 +64,36 @@ uploadArchives {
            dirs 'repos'
        }
     }
+}
+
+eclipse {
+    classpath {
+         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.11'
+}
+
+plugins.withType(JavaPlugin) {
+    
+    eclipse {
+        classpath {
+            plusConfigurations += [
+                configurations.compile,
+                configurations.runtime,
+                configurations.testCompile,
+                configurations.testRuntime
+            ]
+        }
+    }
+}
+
+// We only want to create classpaths etc for java projects.
+plugins.withType(JavaBasePlugin) {
+
+   build.dependsOn eclipseClasspath
+   eclipseClasspath.dependsOn cleanEclipseClasspath
 }
